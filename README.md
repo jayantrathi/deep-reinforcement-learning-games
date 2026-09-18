@@ -1,5 +1,31 @@
 # Deep Reinforcement Learning on Game Environments
 
+Implementation and comparison of reinforcement learning algorithms across
+LunarLander, Assault, Super Mario Bros, and a custom Cubefield environment.
+
+## Environments
+
+### LunarLander
+
+![LunarLander Agent](image/Lunarlander.gif)
+
+Policy Gradient experiments comparing baseline REINFORCE, reward normalization,
+and PPO-style updates.
+
+### Assault
+
+![Assault Agent](image/Assault.gif)
+
+Comparison of DQN, Double DQN, Dueling DQN, and Double Dueling DQN.
+
+### Cubefield
+
+![Cubefield Results](cubefield_rl_comparison_smoothed.png)
+
+Custom environment comparing PPO-Dueling-DQN, QR-DQN, Attention-DQN, and A3C.
+
+# Deep Reinforcement Learning on Game Environments
+
 This project explores and compares different deep reinforcement learning algorithms across LunarLander, Assault, Super Mario Bros, and a custom Cubefield environment.
 
 The main goal was to implement different RL approaches, modify them, and compare how those changes affect training performance. The project covers policy gradient methods, Deep Q-Learning, actor-critic methods, distributional RL, and attention-based networks.
