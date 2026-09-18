@@ -9,44 +9,15 @@ LunarLander, Assault, Super Mario Bros, and a custom Cubefield environment.
 
 ![LunarLander Agent](image/Lunarlander.gif)
 
-Policy Gradient experiments comparing baseline REINFORCE, reward normalization,
-and PPO-style updates.
-
-### Assault
-
-![Assault Agent](image/Assault.gif)
-
-Comparison of DQN, Double DQN, Dueling DQN, and Double Dueling DQN.
-
-### Cubefield
-
-![Cubefield Results](cubefield_rl_comparison_smoothed.png)
-
-Custom environment comparing PPO-Dueling-DQN, QR-DQN, Attention-DQN, and A3C.
-
-# Deep Reinforcement Learning on Game Environments
-
-This project explores and compares different deep reinforcement learning algorithms across LunarLander, Assault, Super Mario Bros, and a custom Cubefield environment.
-
-The main goal was to implement different RL approaches, modify them, and compare how those changes affect training performance. The project covers policy gradient methods, Deep Q-Learning, actor-critic methods, distributional RL, and attention-based networks.
-
-## Environments
-
-### LunarLander
-
-LunarLander was used to experiment with Policy Gradient methods and investigate how changes to the basic algorithm affect training.
-
 The following approaches were compared:
 
 - Baseline Policy Gradient / REINFORCE
 - Policy Gradient + Reward Normalization
 - Reward Normalization + PPO
 
-The baseline method showed high variance during training. Reward normalization was added to reduce the effect of large differences in returns, while PPO-style clipped updates were tested to prevent excessively large policy updates.
-
 ### Assault
 
-Assault was used to compare different extensions of Deep Q-Learning.
+![Assault Agent](image/Assault.gif)
 
 The following algorithms were tested:
 
@@ -55,17 +26,9 @@ The following algorithms were tested:
 - Dueling DQN
 - Double Dueling DQN
 
-DQN was used as the baseline. Double DQN separates action selection from target evaluation to reduce Q-value overestimation. Dueling DQN separates the estimation of state value and action advantage. Double Dueling DQN combines both modifications.
-
-The objective was to see how these changes affected learning and reward performance in a faster, image-based Atari environment.
-
-### Super Mario Bros
-
-Super Mario Bros was used to experiment with actor-critic reinforcement learning using A2C.
-
-The actor determines the action policy while the critic estimates the value of the current state. Mario provided a more difficult environment because actions can have delayed consequences and the agent must learn both movement and exploration over longer sequences.
-
 ### Cubefield
+
+![Cubefield Results](cubefield_rl_comparison_smoothed.png)
 
 Cubefield was used as a custom environment for testing more specialized RL architectures.
 
@@ -77,6 +40,16 @@ The following algorithms were compared:
 - Quantile Regression DQN (QR-DQN)
 - Attention DQN
 - A3C
+
+DQN was used as the baseline. Double DQN separates action selection from target evaluation to reduce Q-value overestimation. Dueling DQN separates the estimation of state value and action advantage. Double Dueling DQN combines both modifications.
+
+The objective was to see how these changes affected learning and reward performance in a faster, image-based Atari environment.
+
+### Super Mario Bros
+
+Super Mario Bros was used to experiment with actor-critic reinforcement learning using A2C.
+
+The actor determines the action policy while the critic estimates the value of the current state. Mario provided a more difficult environment because actions can have delayed consequences and the agent must learn both movement and exploration over longer sequences.
 
 **PPO-Dueling-DQN** combines PPO-style clipped updates with a dueling architecture that separates state value from action advantage. This was used to improve training stability while allowing the network to distinguish between the quality of a state and the usefulness of individual actions.
 
