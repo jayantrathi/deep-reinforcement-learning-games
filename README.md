@@ -1,175 +1,93 @@
 # Deep Reinforcement Learning on Game Environments
 
-Implementation and comparison of reinforcement learning algorithms across
-LunarLander, Assault, Super Mario Bros, and a custom Cubefield environment.
+I implemented and compared a range of RL algorithms across four environments to see how
+specific algorithmic changes, not just more training, affect learning speed and stability.
+The environments are LunarLander, Assault, Super Mario Bros, and Cubefield (a custom one I built).
 
-## Environments
-
-### LunarLander
+## LunarLander
 
 ![LunarLander Agent](image/Lunarlander.gif)
 
-The following approaches were compared:
+Policy-gradient family: baseline REINFORCE, then REINFORCE with reward normalization, then
+PPO on top. Reward normalization alone was a clear jump over the baseline; PPO's clipped
+updates mostly bought stability.
 
-- Baseline Policy Gradient / REINFORCE
-- Policy Gradient + Reward Normalization
-- Reward Normalization + PPO
-
-### Assault
+## Assault
 
 ![Assault Agent](image/Assault.gif)
 
-The following algorithms were tested:
+The DQN family, to isolate what each modification contributes: DQN, Double DQN (decouples
+action selection from target evaluation to cut Q-value overestimation), Dueling DQN
+(splits state value from action advantage), and the two combined.
 
-- DQN
-- Double DQN
-- Dueling DQN
-- Double Dueling DQN
-
-### Cubefield
+## Cubefield
 
 ![Cubefield Results](cubefield_rl_comparison_smoothed.png)
 
-Cubefield was used as a custom environment for testing more specialized RL architectures.
+Cubefield is a custom environment I wrote: you steer through an oncoming field of cubes and
+survive as long as possible, so the agent has to learn when and where to move as obstacles
+approach. I used it as a harder, faster, image-based testbed and compared four more
+specialized architectures:
 
-The objective of Cubefield is to control the player while moving through a field of incoming cubes without colliding with them. The agent is rewarded for surviving longer, so it must learn when and where to move as obstacles approach.
+- **PPO + Dueling DQN** - clipped PPO-style updates with a dueling head, for stability plus
+  a clean split between how good a state is and how useful each action is.
+- **Quantile Regression DQN** - predicts a distribution of returns instead of a single
+  Q-value, to test whether modeling that distribution handles the randomness of the obstacle
+  layouts better.
+- **Attention DQN** - a multi-head attention block in the DQN, so the network can learn which
+  part of the frame matters when deciding how to dodge.
+- **A3C** - actor-critic, where the critic's advantage estimate drives the policy updates.
 
-The following algorithms were compared:
+The four differed noticeably in learning speed, stability, and peak reward.
 
-- PPO-Dueling-DQN
-- Quantile Regression DQN (QR-DQN)
-- Attention DQN
-- A3C
+## Super Mario Bros
 
-DQN was used as the baseline. Double DQN separates action selection from target evaluation to reduce Q-value overestimation. Dueling DQN separates the estimation of state value and action advantage. Double Dueling DQN combines both modifications.
+Used to experiment with A2C actor-critic. Mario is harder because the consequences of an
+action are delayed and the agent has to learn both movement and exploration over long
+sequences.
 
-The objective was to see how these changes affected learning and reward performance in a faster, image-based Atari environment.
+## What I took from it
 
-### Super Mario Bros
+The point wasn't to max out any single game score. It was to build these algorithms myself
+rather than call them from a library, and watch how reward normalization, Double Q-learning,
+dueling heads, PPO clipping, quantile regression, and attention each change the agent's
+behaviour. That hands-on comparison is the part that stuck.
 
-Super Mario Bros was used to experiment with actor-critic reinforcement learning using A2C.
-
-The actor determines the action policy while the critic estimates the value of the current state. Mario provided a more difficult environment because actions can have delayed consequences and the agent must learn both movement and exploration over longer sequences.
-
-**PPO-Dueling-DQN** combines PPO-style clipped updates with a dueling architecture that separates state value from action advantage. This was used to improve training stability while allowing the network to distinguish between the quality of a state and the usefulness of individual actions.
-
-**Quantile DQN** predicts a distribution of possible future returns rather than a single expected Q-value. Quantile regression was used to investigate whether modeling the return distribution could make the agent more robust to the uncertainty created by different obstacle configurations.
-
-**Attention DQN** adds a multi-head attention mechanism to the DQN architecture. The goal was to allow the network to learn which parts of the state are most relevant when deciding how to avoid incoming obstacles.
-
-**A3C** uses an actor-critic architecture where the actor learns the action policy and the critic estimates state values. The advantage calculated from the critic is then used to improve the policy updates.
-
-## Results
-
-Performance was evaluated primarily using episode reward curves during training.
-
-For LunarLander, reward normalization produced a clear improvement over the baseline Policy Gradient implementation, while adding PPO-style updates further changed the stability and performance of the learned policy.
-
-For Assault, the different DQN architectures were compared to determine the effect of Double Q-Learning and the Dueling architecture on training performance.
-
-For Cubefield, PPO-Dueling-DQN, QR-DQN, Attention DQN, and A3C were trained and compared using the same environment. The results showed noticeable differences in learning speed, stability, and peak episode reward between the algorithms.
-
-These experiments were used to understand how changes to the underlying RL algorithm affect learning rather than only trying to maximize the final game score.
-
-## Tools and Libraries
-
-- Python
-- PyTorch
-- OpenAI Gym
-- NumPy
-- Matplotlib
-- PyGame
-- Atari Learning Environment
-- gym-super-mario-bros
-
-## RL Concepts Used
-
-- Deep Q-Learning
-- Experience Replay
-- Target Networks
-- Epsilon-Greedy Exploration
-- Double Q-Learning
-- Dueling Networks
-- Policy Gradients
-- Reward Normalization
-- PPO Clipped Updates
-- Actor-Critic Learning
-- Advantage Estimation
-- Distributional Reinforcement Learning
-- Quantile Regression
-- Attention Mechanisms
-- Gradient Clipping
-
-## Running the Project
-
-First install the required dependencies:
+## Running it
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### Policy Gradient
-
-To train a Policy Gradient agent:
+Policy gradient:
 
 ```bash
-python main.py --train_pg --pg_type=pg_nor --folder_name=[your_folder_name]
-```
-
-To test a trained Policy Gradient model:
-
-```bash
+python main.py --train_pg --pg_type=pg_nor --folder_name=<your_folder>
 python main.py --test_pg --model_path=./model/best/pg.cpt
 ```
 
-### Deep Q-Learning
-
-To train a DQN agent:
+DQN (swap `--dqn_type` for the variant: DQN, DoubleDQN, DuelingDQN, DDDQN):
 
 ```bash
-python main.py --train_dqn --dqn_type=DoubleDQN --folder_name=[your_folder_name]
-```
-
-To test a trained DQN model:
-
-```bash
+python main.py --train_dqn --dqn_type=DoubleDQN --folder_name=<your_folder>
 python main.py --test_dqn --dqn_type=DDDQN --model_path=./model/best/dqn.cpt
 ```
 
-The `dqn_type` argument can be changed depending on the DQN variant being tested.
-
-### Cubefield
-
-The Cubefield experiments are contained in a separate Python script.
-
-From the project directory, run:
+Cubefield is self-contained:
 
 ```bash
 python Cubefield.py
 ```
 
-Alternatively, run it using the complete file path:
-
-```bash
-python [FILE_PATH]/Cubefield.py
-```
-
-The script trains the Cubefield agents and generates learning curves that can be used to compare their episode rewards over training.
-
-## Project Structure
+## Layout
 
 ```text
-Deep-Reinforcement-Learning-on-Atari-Games/
-│
-├── main.py
-├── Cubefield.py
-├── requirements.txt
-├── model/
-│   └── best/
-├── README.md
-└── ...
+main.py          entry point for the LunarLander / Assault experiments
+Cubefield.py     the custom environment and its agents
+agent_dir/       policy-gradient, PPO, DQN, and A2C agents
+a2c/             actor-critic and the vectorized-env plumbing
+plot.py          learning-curve plots
 ```
 
-## Summary
-
-This project gave me hands-on experience implementing and modifying reinforcement learning algorithms rather than only using existing RL libraries. I experimented with how changes such as reward normalization, Double Q-Learning, dueling architectures, PPO clipping, quantile regression, and attention affect the behavior and training stability of RL agents across different game environments.
+Built with Python, PyTorch, OpenAI Gym, the Atari Learning Environment, gym-super-mario-bros,
+NumPy, Matplotlib, and PyGame.
